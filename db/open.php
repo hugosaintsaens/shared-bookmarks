@@ -1,6 +1,6 @@
 
 <?php
-    $dsn = 'mysql:dbname=signets;host=localhost';
+    $dsn = 'mysql:dbname=shared-bookmarks;host=localhost';
     $user = 'root';
     $password = '';
     try {

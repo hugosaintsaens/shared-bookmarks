@@ -9,23 +9,23 @@
     <meta name="description" content="Exercices de PHP"/>
     <meta name="author" content="Hugo Saint-Saens"/>
     <meta name="keywords" lang="fr" content="PHP"/>
-    <link rel="stylesheet" href="./css/custom.css"/>
-    <link rel="stylesheet" href="./css/bootstrap.css"/>
-    <script src="./js/bootstrap.js"></script>
+    <link rel="stylesheet" href="../css/custom.css"/>
+    <link rel="stylesheet" href="../css/bootstrap.css"/>
+    <script src="../js/bootstrap.js"></script>
   </head>
   <body>
-    <form action="ajouterDocument.php" method="POST" class="w-75 mx-auto my-5">
+    <form action="../private/ajouterDocument.php" method="POST" class="w-75 mx-auto my-5">
         <div class="form-group">
             <label for="title">Titre : </label>
             <input type="text" id="title" class="form-control" name="title" required />
         </div>
         <div class="form-group">
-            <label for="title">URL : </label>
+            <label for="url">URL : </label>
             <input type="text" id="url" class="form-control" name="url" required />
         </div>
         </div class="form-group"
-            <label for="keywords">Mots-clés (séparés par ;) </label>
-            <input type="text" id="keywords" class="form-control" name="keywords" required /></br>
+            <label for="keyword">Mots-clés (séparés par ;) </label>
+            <input type="text" id="keyword" class="form-control" name="keyword" required /></br>
         </div>
         <button type="submit" name="submit" class="btn btn-primary">Envoyer</button>
     </form>
