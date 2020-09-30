@@ -78,4 +78,5 @@
         }
         require '../db/close.php';
     }
+    header('Location: ../public/index.html');
 ?>
