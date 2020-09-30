@@ -9,35 +9,71 @@
         $keywords = str_replace(" ", "", $keyword);
         unset($keyword);
         require '../db/open.php';
-        // ON VERIFIE QUE L'URL DU DOCUMENT N'EXISTE PAS
-        // SI L'URL EXISTE
-        // ON L'AJOUTE PAS
-        $sth = $dbh->prepare("SELECT * FROM document WHERE url = ?");
-		$sth->bindParam(1, $url);
-        $sth->execute();
-        $sth->fetch(\PDO::FETCH_ASSOC);
-        if ($sth->rowCount() == 0) {
+        /*
+        * Si l'url existe 
+        * On l'ajoute pas
+        * Sinon
+        * On l'ajoute
+        */
+        $sthDocument = $dbh->prepare("SELECT * FROM document WHERE url = ?");
+		$sthDocument->bindParam(1, $url);
+        $sthDocument->execute();
+        $resultDocument = $sthDocument->fetch(\PDO::FETCH_ASSOC);
+        if ($sthDocument->rowCount() == 0) {
             $numerod = uniqid(rand(), true);
-            $insert = $dbh->prepare("INSERT INTO document(numerod, titre, url) VALUES(?, ?, ?)");
-            $insert->bindParam(1, $numerod);
-            $insert->bindParam(2, $title);
-            $insert->bindParam(3, $url);
-            $insert->execute();
+            $insertDocument = $dbh->prepare("INSERT INTO document(numerod, titre, url) VALUES(?, ?, ?)");
+            $insertDocument->bindParam(1, $numerod);
+            $insertDocument->bindParam(2, $title);
+            $insertDocument->bindParam(3, $url);
+            $insertDocument->execute();
         }
-        // ON VERIFIE QUE LES MOTS CLES N'EXISTENT PAS
-        // SI LES MOTS CLES EXISTE
-        // ON LES AJOUTENT PAS
+        /*
+        * Si les mots cles existent
+        * On les ajoute pas
+        * Sinon
+        * On les ajoute
+        */
         foreach ($keywords as $keyword) {
-            $sth = $dbh->prepare("SELECT * FROM terme WHERE motcle = ?");
-            $sth->bindParam(1, $keyword);
-            $sth->execute();
-            $sth->fetch(\PDO::FETCH_ASSOC);
-            if ($sth->rowCount() == 0) {
+            $sthTerme = $dbh->prepare("SELECT * FROM terme WHERE motcle = ?");
+            $sthTerme->bindParam(1, $keyword);
+            $sthTerme->execute();
+            $resultTerme = $sthTerme->fetch(\PDO::FETCH_ASSOC);
+            if ($sthTerme->rowCount() == 0) {
                 $numerot = uniqid(rand(), true);
-                $insert = $dbh->prepare("INSERT INTO terme(numerot, motcle) VALUES(?, ?)");
-                $insert->bindParam(1, $numerot);
-                $insert->bindParam(2, $keyword);
-                $insert->execute();
+                $insertTerme = $dbh->prepare("INSERT INTO terme(numerot, motcle) VALUES(?, ?)");
+                $insertTerme->bindParam(1, $numerot);
+                $insertTerme->bindParam(2, $keyword);
+                $insertTerme->execute();
+            }
+            /*
+            * On lie les mots cles au document
+            */
+            $sthDecrit = $dbh->prepare("SELECT * FROM decrit WHERE numerod = ? AND numerot = ?");
+            if ($sthDocument->rowCount() == 0) {
+                $sthDecrit->bindParam(1, $numerod);
+            } else {
+                $sthDecrit->bindParam(1, $resultDocument['numerod']);
+            }
+            if ($sthTerme->rowCount() == 0) {
+                $sthDecrit->bindParam(2, $numerot);
+            } else {
+                $sthDecrit->bindParam(2, $resultTerme['numerot']);
+            }
+            $sthDecrit->execute();
+            $resultDecrit = $sthDecrit->fetch(\PDO::FETCH_ASSOC);
+            if ($sthDecrit->rowCount() == 0) {
+                $insertDecrit = $dbh->prepare("INSERT INTO decrit(numerod, numerot) VALUES(?, ?)");
+                if ($sthDocument->rowCount() == 0) {
+                    $insertDecrit->bindParam(1, $numerod);
+                } else {
+                    $insertDecrit->bindParam(1, $resultDocument['numerod']);
+                }
+                if ($sthTerme->rowCount() == 0) {
+                    $insertDecrit->bindParam(2, $numerot);
+                } else {
+                    $insertDecrit->bindParam(2, $resultTerme['numerot']);
+                }
+                $insertDecrit->execute();
             }
         }
         require '../db/close.php';
