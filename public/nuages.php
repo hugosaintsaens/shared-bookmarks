@@ -1,7 +1,14 @@
+<?php
+    require '../db/open.php';
+    $sthKeywords = $dbh->prepare("SELECT t.motcle, COUNT(d.numerod) FROM terme AS t, decrit AS d WHERE t.numerot = d.numerot GROUP BY t.motcle ORDER BY t.motcle ASC");
+    $sthKeywords->execute();
+    $resultKeywords = $sthKeywords->fetchAll(\PDO::FETCH_ASSOC);
+    require '../db/close.php';
+?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <title>Accueil</title>
+    <title>Nuage</title>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
     <meta http-equiv="Content-Type" content="text/html;charset=ISO-8859-1"/>
@@ -13,13 +20,12 @@
     <link rel="stylesheet" href="../css/bootstrap.css"/>
     <script src="../js/bootstrap.js"></script>
 </head>
-<body>
-    <h1>Accueil</h1>
-    </br>
-    <a href="creabase.php">Créer les relations (tables)...</a></br>
-    <a href="saisie.html">Ajouter un document...</a></br>
-    <a href="">Ajouter une image à un document...</a></br>
-    <a href="liste.php">Lister les documents...</a></br>
-    <a href="nuages.php">Afficher le nuage des mots-clés...</a></br>
+<body class="liste">
+    <h1 class="text-center">Nuage de mots-clés</h1>
+    <?php
+        foreach ($resultKeywords as $terme) {
+            echo $terme['motcle'].' ';
+        }
+    ?>
 </body>
 </html>
