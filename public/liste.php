@@ -1,6 +1,6 @@
 <?php
     require '../db/open.php';
-    $sthDoc = $dbh->prepare("SELECT * FROM document");
+    $sthDoc = $dbh->prepare("SELECT * FROM document ORDER BY titre ASC");
     $sthDoc->execute();
     $resultDoc = $sthDoc->fetchAll(\PDO::FETCH_ASSOC);
     require '../db/close.php';
@@ -38,7 +38,7 @@
                     <td>
                         <?php
                             require '../db/open.php';
-                            $sthKeywords = $dbh->prepare("SELECT t.motcle FROM document AS doc, terme AS t, decrit AS d WHERE doc.numerod = d.numerod AND d.numerot = t.numerot AND doc.numerod = ?");
+                            $sthKeywords = $dbh->prepare("SELECT t.motcle FROM document AS doc, terme AS t, decrit AS d WHERE doc.numerod = d.numerod AND d.numerot = t.numerot AND doc.numerod = ? ORDER BY t.motcle");
                             $sthKeywords->bindParam(1, $rowDoc['numerod']);
                             $sthKeywords->execute();
                             $resultKeywords = $sthKeywords->fetchAll(\PDO::FETCH_ASSOC);
