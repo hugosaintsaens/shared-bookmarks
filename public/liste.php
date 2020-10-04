@@ -1,8 +1,8 @@
 <?php
     require '../db/open.php';
-    $sth = $dbh->prepare("SELECT * FROM document AS doc, terme AS t, decrit AS d WHERE doc.numerod = d.numerod AND d.numerot = t.numerot");
-    $sth->execute();
-    $result = $sth->fetchAll(\PDO::FETCH_ASSOC);
+    $sthDoc = $dbh->prepare("SELECT * FROM document");
+    $sthDoc->execute();
+    $resultDoc = $sthDoc->fetchAll(\PDO::FETCH_ASSOC);
     require '../db/close.php';
 ?>
 <!DOCTYPE html>
@@ -31,30 +31,27 @@
             </tr>
         </thead>
         <tbody>
-            <?php foreach ($result as $row) { ?>
+            <?php foreach ($resultDoc as $rowDoc) { ?>
                 <tr>
-                    <th scope="row"><= $row['titre'] ?></th>
-                    <td>Mark</td>
-                    <td>Otto</td>
+                    <th scope="row"><?= $rowDoc['titre'] ?></th>
+                    <td><a href="<?= $rowDoc['url'] ?>" target="_blank"><?= $rowDoc['url'] ?></a></td>
+                    <td>
+                        <?php
+                            require '../db/open.php';
+                            $sthKeywords = $dbh->prepare("SELECT t.motcle FROM document AS doc, terme AS t, decrit AS d WHERE doc.numerod = d.numerod AND d.numerot = t.numerot AND doc.numerod = ?");
+                            $sthKeywords->bindParam(1, $rowDoc['numerod']);
+                            $sthKeywords->execute();
+                            $resultKeywords = $sthKeywords->fetchAll(\PDO::FETCH_ASSOC);
+                            require '../db/close.php';
+                            $motcle = array();
+                            foreach ($resultKeywords as $rowKeywords) {
+                                array_push($motcle, $rowKeywords['motcle']);
+                            }
+                            echo implode(" ; ", $motcle);
+                        ?>
+                    </td>
                 </tr>
             <?php } ?>
-            <tr>
-                <th scope="row">1</th>
-                <td>Mark</td>
-                <td>Otto</td>
-                <td>@mdo</td>
-            </tr>
-            <tr>
-                <th scope="row">2</th>
-                <td>Jacob</td>
-                <td>Thornton</td>
-                <td>@fat</td>
-            </tr>
-            <tr>
-                <th scope="row">3</th>
-                <td colspan="2">Larry the Bird</td>
-                <td>@twitter</td>
-            </tr>
         </tbody>
     </table>
 </body>
